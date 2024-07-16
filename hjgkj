@@ -1,0 +1,38 @@
+@Test
+public void readDjsGeoJSON() {
+	// 指定文件的名字和路径
+	String strVectorFile = "path/2015省市区县乡镇地名数据/地名点_地级市.geojson";
+	// 注册所有的驱动
+	ogr.RegisterAll();
+	gdal.SetConfigOption("GDAL_FILENAME_IS_UTF8", "YES");
+	gdal.SetConfigOption("SHAPE_ENCODING", "UTF-8");
+	String strDriverName = "GeoJSON";
+	org.gdal.ogr.Driver oDriver = ogr.GetDriverByName(strDriverName);
+	if (oDriver == null) {
+		System.out.println(strDriverName + " 驱动不可用！\n");
+		return;
+	}
+	DataSource dataSource = oDriver.Open(strVectorFile);
+	Layer layer = dataSource.GetLayer(0);
+	SpatialReference spatialReference = layer.GetSpatialRef();
+	String srid = spatialReference.GetAttrValue("AUTHORITY", 1);
+	long featureCount = layer.GetFeatureCount();
+	List<GeographicName> list = new ArrayList<GeographicName>();
+	for (int i = 0; i < featureCount; i++) {
+		Feature feature = layer.GetFeature(i);
+		String name = feature.GetFieldAsString("NAME");
+		String pinyin = feature.GetFieldAsString("PINYIN");
+		String classz = feature.GetFieldAsString("CLASS");
+		String bz = feature.GetFieldAsString("BZ");
+		String slx = feature.GetFieldAsString("SLX");
+		Geometry geom = feature.GetGeometryRef();
+		//step 1、生成原始wkt
+		String wkt = geom.ExportToWkt();
+		wkt = "SRID=" + srid +";" + wkt;//拼接srid，实现动态写入
+		list.add(new GeographicName(name, pinyin, classz, bz, slx, wkt));
+		System.out.println("name=" + name + "\tclassz=" + classz+ "\twkt="+ wkt);
+	}
+	geographicNameService.saveBatch(list,300);
+	dataSource.delete();
+	gdal.GDALDestroyDriverManager();
+}
