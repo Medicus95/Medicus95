@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: jdbc:mysql://${voyager.db.host}:3306/study_db?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: password  # 修改为控制台输出的password
+    #druid数据源配置
+    druid:
+      # Druid数据源的公钥
+      public-key: publicKey # 修改为控制台输出的publicKey
+      filter:
+        # 启用Druid的过滤器配置
+        config: 
+          enabled: true
+      connect-properties:
+        # 启用Druid的连接属性解密功能
+        config.decrypt: true
+        config.decrypt.key: publicKey # 控制台输出的publicKey
+f
