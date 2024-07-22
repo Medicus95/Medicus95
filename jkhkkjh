@@ -1,0 +1,16 @@
+function execQuery(){
+		var keyWord = $("#address").val();
+		console.log(keyWord);
+		$.ajax({
+			type: "get",
+			url: "http://api.tianditu.gov.cn/geocoder?ds={'keyWord':'" + keyWord + "'}&tk=" + tdt_client_key,
+			data: {},
+			success: function(rsData) {
+				console.log(rsData);
+				var rsObj = jQuery.parseJSON(rsData); 
+				var loc_info = rsObj.location;
+				L.marker([loc_info.lat, loc_info.lon]).addTo(map).bindPopup("level:"+loc_info.level + ",score:"+ loc_info.score).openPopup();
+				map.setView([loc_info.lat, loc_info.lon]);
+			}
+		});
+	}
