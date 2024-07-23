@@ -1,0 +1,59 @@
+
+    public Course findOneCourse(String cname) {
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        DBConn db = new DBConn();
+        conn = db.getConn();
+        String sql ="select cno, cteacher, cplace, ctype, ctime from course where cname='" + cname + "'";
+        Course c = null;
+        try {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                c = new Course();
+                c.setCno(rs.getString("cno"));
+                c.setCteacher(rs.getString("cteacher"));
+                c.setCtype(rs.getString("ctype"));
+                c.setCplace(rs.getString("cplace"));
+                c.setCtime(rs.getString("ctime"));
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (Exception em) {
+            em.printStackTrace();
+            System.out.println("sql有错");
+        }
+        return c;
+    }
+ 
+    public Course findOneCourse2(String cteacher) {
+        Connection conn = null;
+        Statement stmt = null;
+        ResultSet rs = null;
+        DBConn db = new DBConn();
+        conn = db.getConn();
+        String sql ="select cno, cname, cplace, ctype, ctime from course where cteacher='" +cteacher + "'";
+        Course c = null;
+        try {
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery(sql);
+            if (rs.next()) {
+                c = new Course();
+                c.setCno(rs.getString("cno"));
+                c.setCname(rs.getString("cname"));
+                c.setCtype(rs.getString("ctype"));
+                c.setCplace(rs.getString("cplace"));
+                c.setCtime(rs.getString("ctime"));
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (Exception em) {
+            em.printStackTrace();
+            System.out.println("sql有错");
+        }
+        return c;
+    }
+}
